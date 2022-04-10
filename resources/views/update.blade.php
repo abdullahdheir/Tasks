@@ -25,6 +25,14 @@
                                 </div>
                             @endif
                             <div class="form-group">
+                                <label for="user_id" class="col-sm-3 control-label">User Id</label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" name="user_id" id="task-name" class="form-control"
+                                        value="{{ $task->user_id }}">
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label for="task-name" class="col-sm-3 control-label">Task</label>
 
                                 <div class="col-sm-6">

@@ -3,20 +3,28 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
     //
 
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
 
         // Select Data From DataBase
 
-        $tasks =  DB::table('tasks')->get();
+        $tasks_admin =  DB::table('tasks')->get();
+        $tasks =  DB::table('tasks')->where('user_id', Auth::id())->get();
+        $admin = DB::table('users')->where('isAdmin', '=', 1)->find(Auth::id());
 
-        return view('tasks', ['tasks' => $tasks]);
+        return view('tasks', ['tasks' => $tasks, 'admin' => $admin, 'tasks_admin' => $tasks_admin]);
     }
 
     public function store(Request $request)
@@ -31,6 +39,7 @@ class TaskController extends Controller
 
         // Insert Data In DataBase
         DB::table('tasks')->insert([
+            'user_id' => $request->user_id,
             'name' => $request->name,
             'created_at' => date('Y-m-d H:i:s'),
         ]);
@@ -55,10 +64,11 @@ class TaskController extends Controller
         // Update Date From DataBase
 
         DB::table('tasks')->where('id', $id)->update([
+            'user_id' => $request->user_id,
             'name' => $request->name,
             'updated_at' => now()
         ]);
-        return redirect()->route('tasks_index')->with('insert', 'Inserted Task Successfully ');
+        return redirect()->route('tasks_index');
     }
 
     public function edit($id)
